@@ -42,7 +42,32 @@ while isempty(start_loc)
       end
     end
 end
-
+for i=1:nr_of_obstacles
+   u=[1,1,1,1];
+   if cfg.x_obst(:,i)==start_loc+[-1;0] | start_loc(1)==1
+      u(1)=0;
+   end
+   if cfg.x_obst(:,i)==start_loc+[1;0] | start_loc(1)==5
+      u(2)=0;
+   end
+   if cfg.x_obst(:,i)==start_loc+[0-1] | start_loc(2)==1
+      u(3)=0;
+   end
+   if cfg.x_obst(:,i)==start_loc+[0;1] | start_loc(2)==5
+      u(4)=0;
+   end
+end
+if u(1)
+    ustart=1;
+elseif u(2)
+    ustart=2;
+elseif u(3)
+    ustart=3;
+elseif u(4)
+    ustart=4;
+else
+    'Please re-run the code, you are blocked!'  
+end
 model = gridnav_problem('model', cfg);
 % use the created to simulate a transition
 
@@ -50,7 +75,7 @@ model = gridnav_problem('model', cfg);
 % xplus is the next state, rplus the reward resulting from the transition
 % terminal is a boolean flag indicating whether the resulting state is
 % terminal or not
-[xplus, rplus, terminal] = gridnav_mdp(model, start_loc, 2);   
+[xplus, rplus, terminal] = gridnav_mdp(model, start_loc, ustart);   
 xplus
 rplus
 
