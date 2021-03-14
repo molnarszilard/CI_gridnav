@@ -94,14 +94,19 @@ h(1)=ustart;
 iter=0;
 discount=0.95;
 viscfg.Q = zeros(5, 5, 4);
-distance = zeros(5, 5, 4);
-distance(start_loc(1),start_loc(2),ustart)=1;
+beenthere = zeros(5, 5, 4);
+beenthere(xplus(1),xplus(2),ustart)=1;
 
 while iter<epsqiter & ~terminal
 %     viscfg.Q=viscfg.Q*discount;
     movement=randi([1 4],1,1)
-    [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement)
-    viscfg.Q(xplus(1),xplus(2),movement)=viscfg.Q(start_loc(1),start_loc(2),movement)+rplus;
+    [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement);
+    
+    if ~beenthere(xplus(1),xplus(2),movement)
+        viscfg.Q(xplus(1),xplus(2),movement)=viscfg.Q(start_loc(1),start_loc(2),movement)+rplus;
+    end
+    beenthere(xplus(1),xplus(2),movement)=1;
+    
     viscfg.x = xplus;
     viscfg.gview = gridnav_visualize(viscfg);
 %     pause;
@@ -110,7 +115,7 @@ while iter<epsqiter & ~terminal
 %     model = gridnav_problem('reset', cfg,'rand');
 end
 pause;
-quality=viscfg.Q
+% quality=viscfg.Q
 % to show a Q-function, we place it on viscfg
 viscfg.x = [];  % before, remove the robot state since we don't want to show it anymore
 % as an example, we initialize an arbitrary Q-function
