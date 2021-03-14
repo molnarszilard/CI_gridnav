@@ -79,14 +79,14 @@ model = gridnav_problem('model', cfg);
 
 
 [xplus, rplus, terminal] = gridnav_mdp(model, start_loc, ustart);   
-xplus
-rplus
+% xplus
+% rplus
 %%
 viscfg = struct;
 viscfg.model = model;
 viscfg.x = xplus;
 viscfg.gview = gridnav_visualize(viscfg);
-epsqiter=100;
+epsqiter=10;
 epshiter=3;
 epsheval=1;
 h=zeros(1,epsqiter);
@@ -95,17 +95,30 @@ iter=0;
 discount=0.95;
 viscfg.Q = zeros(5, 5, 4);
 beenthere = zeros(5, 5, 4);
-beenthere(start_loc(1),start_loc(2),ustart)=1;
+distance = zeros(5, 5);
+beenthere(xplus(1),xplus(2),ustart)=1;
+distance(xplus(1),xplus(2))=1;
 
 while iter<epsqiter & ~terminal
-%     viscfg.Q=viscfg.Q*discount;
-    movement=randi([1 4],1,1)
+    distprev= distance(xplus(1),xplus(2));
+    movement=randi([1 4],1,1);
     [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement);
+    
+    if ~beenthere(xplus(1),xplus(2),movement)
+%         mask = distance ~= 0;
+%         distance
+%         mask
+%         pause;
+%         distance=distance-mask*distprev;
+%         viscfg.Q=viscfg.Q*discount;
+        distprev=0;
+        viscfg.Q(xplus(1),xplus(2),movement)=viscfg.Q(xplus(1),xplus(2),movement)+rplus;
+    end
+    distance(xplus(1),xplus(2))=distprev+1;
     beenthere(xplus(1),xplus(2),movement)=1;
-    viscfg.Q(xplus(1),xplus(2),movement)=viscfg.Q(start_loc(1),start_loc(2),movement)+rplus;
+    
     viscfg.x = xplus;
     viscfg.gview = gridnav_visualize(viscfg);
-%     pause;
     iter=iter+1;
     
 %     model = gridnav_problem('reset', cfg,'rand');
@@ -127,12 +140,22 @@ pause;
 % to show a policy in addition to the Q-function, add it to viscfg 
 % h also has a standard structure: a matrix with 
 % (size on X x size on Y) elements, each representing an action, with values 1 to 4
+maxdist=max(max(distance));
+% maxQ=max(max(max(viscfg.Q)));
+% viscfg.Q
 for i=1:5
     for j=1:5
+        mask =  ~= 0;
+        if i == xplus(1) & j == xplus(2)
+            viscfg.Q(i,j,:)=(viscfg.Q(i,j,:))*discount^(maxdist-distance(i,j));
+        else
+            viscfg.Q(i,j,:)=(viscfg.Q(i,j,:)+10)*discount^(maxdist-distance(i,j));
+        end
         [maxval, maxind] = max(viscfg.Q(i,j,:));
         viscfg.h(i,j)=maxind;
     end
 end
+% viscfg.Q
 % viscfg.h = [1 1 1 1 1; 2 2 2 2 2; 3 3 3 3 3; 4 4 4 4 4; 1 1 1 1 1];
 % if we wanted to NOT reuse the view, but create a new figure, we could do:
 viscfg.gview = [];
