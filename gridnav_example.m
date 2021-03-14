@@ -75,25 +75,42 @@ model = gridnav_problem('model', cfg);
 % xplus is the next state, rplus the reward resulting from the transition
 % terminal is a boolean flag indicating whether the resulting state is
 % terminal or not
+%%
+
+
 [xplus, rplus, terminal] = gridnav_mdp(model, start_loc, ustart);   
 xplus
 rplus
-
 %%
-% show the updated state of the agent
 viscfg = struct;
 viscfg.model = model;
 viscfg.x = xplus;
-viscfg.gview = gridnav_visualize(viscfg);    % note we remember the view...
-
-% ... so if we do another transition ...
-[xplus, rplus, terminal] = gridnav_mdp(model, xplus, 2);   
-% ... we can reuse it. reusing the view is recommended as creating it costs a lot of computation,
-% whereas just reusing is cheap
-viscfg.x = xplus;
 viscfg.gview = gridnav_visualize(viscfg);
+epsqiter=100;
+epshiter=3;
+epsheval=1;
+h=zeros(1,epsqiter);
+h(1)=ustart;
+iter=0;
+discount=0.95;
+viscfg.Q = zeros(5, 5, 4);
+distance = zeros(5, 5, 4);
+distance(start_loc(1),start_loc(2),ustart)=1;
 
+while iter<epsqiter & ~terminal
+%     viscfg.Q=viscfg.Q*discount;
+    movement=randi([1 4],1,1)
+    [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement)
+    viscfg.Q(xplus(1),xplus(2),movement)=viscfg.Q(start_loc(1),start_loc(2),movement)+rplus;
+    viscfg.x = xplus;
+    viscfg.gview = gridnav_visualize(viscfg);
+%     pause;
+    iter=iter+1;
+    
+%     model = gridnav_problem('reset', cfg,'rand');
+end
 pause;
+quality=viscfg.Q
 % to show a Q-function, we place it on viscfg
 viscfg.x = [];  % before, remove the robot state since we don't want to show it anymore
 % as an example, we initialize an arbitrary Q-function
@@ -102,14 +119,23 @@ viscfg.x = [];  % before, remove the robot state since we don't want to show it 
 % correctly by the visualization function:
 % size on X (here, 5) x size on Y (here, 5) x number of actions (here, 4)
 % n (= number of states = 5) rows, and 2 (number of actions) columns
-viscfg.Q = rand(5, 5, 4);
+% viscfg.Q = rand(5, 5, 4);
 viscfg.gview = gridnav_visualize(viscfg);   
 
 pause;
 % to show a policy in addition to the Q-function, add it to viscfg 
 % h also has a standard structure: a matrix with 
 % (size on X x size on Y) elements, each representing an action, with values 1 to 4
-viscfg.h = [1 1 1 1 1; 2 2 2 2 2; 3 3 3 3 3; 4 4 4 4 4; 1 1 1 1 1];
+for i=1:5
+    for j=1:5
+        [maxval, maxind] = max(viscfg.Q(i,j,:));
+        viscfg.h(i,j)=maxind;
+    end
+end
+% viscfg.h = [1 1 1 1 1; 2 2 2 2 2; 3 3 3 3 3; 4 4 4 4 4; 1 1 1 1 1];
 % if we wanted to NOT reuse the view, but create a new figure, we could do:
 viscfg.gview = [];
 viscfg.gview = gridnav_visualize(viscfg);
+pause
+
+
