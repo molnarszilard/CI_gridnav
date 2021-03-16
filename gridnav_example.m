@@ -94,28 +94,24 @@ h(1)=ustart;
 iter=0;
 discount=0.95;
 viscfg.Q = zeros(5, 5, 4);
-beenthere = zeros(5, 5, 4);
+donethat = zeros(5, 5, 4);
 distance = zeros(5, 5);
-beenthere(xplus(1),xplus(2),ustart)=1;
+viscfg.Q(start_loc(1),start_loc(2),ustart)=rplus;
+donethat(start_loc(1),start_loc(2),ustart)=1;
 distance(xplus(1),xplus(2))=1;
 
 while iter<epsqiter & ~terminal
     distprev= distance(xplus(1),xplus(2));
     movement=randi([1 4],1,1);
+    prevx=xplus;
     [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement);
     
-    if ~beenthere(xplus(1),xplus(2),movement)
-%         mask = distance ~= 0;
-%         distance
-%         mask
-%         pause;
-%         distance=distance-mask*distprev;
-%         viscfg.Q=viscfg.Q*discount;
-        distprev=0;
-        viscfg.Q(xplus(1),xplus(2),movement)=viscfg.Q(xplus(1),xplus(2),movement)+rplus;
+    if ~donethat(prevx(1),prevx(2),movement)
+        viscfg.Q(prevx(1),prevx(2),movement)=viscfg.Q(prevx(1),prevx(2),movement)+rplus;
     end
     distance(xplus(1),xplus(2))=distprev+1;
-    beenthere(xplus(1),xplus(2),movement)=1;
+
+    donethat(prevx(1),prevx(2),movement)=1;
     
     viscfg.x = xplus;
     viscfg.gview = gridnav_visualize(viscfg);
@@ -134,22 +130,39 @@ viscfg.x = [];  % before, remove the robot state since we don't want to show it 
 % size on X (here, 5) x size on Y (here, 5) x number of actions (here, 4)
 % n (= number of states = 5) rows, and 2 (number of actions) columns
 % viscfg.Q = rand(5, 5, 4);
-viscfg.gview = gridnav_visualize(viscfg);   
-
-pause;
+% viscfg.gview = gridnav_visualize(viscfg);   
+% 
+% pause;
 % to show a policy in addition to the Q-function, add it to viscfg 
 % h also has a standard structure: a matrix with 
 % (size on X x size on Y) elements, each representing an action, with values 1 to 4
 maxdist=max(max(distance));
-% maxQ=max(max(max(viscfg.Q)));
+maxQ=max(max(max(viscfg.Q)));
 % viscfg.Q
+
+distance
+di=1;
+while di<maxdist
+    if isempty(distance(distance==di))
+       for i=1:5
+           for j=1:5
+               if(distance(i,j)>di)
+                   distance(i,j)=distance(i,j)-1;
+               end
+           end
+       end
+       maxdist=maxdist-1;
+    else
+       di=di+1;
+    end
+end
+distance
+
 for i=1:5
     for j=1:5
         mask =  viscfg.Q~= 0;
-        if i == xplus(1) & j == xplus(2)
-            viscfg.Q(i,j,:)=(viscfg.Q(i,j,:))*discount^(maxdist-distance(i,j));
-        else
-            viscfg.Q(i,j,:)=mask(i,j,:).*(viscfg.Q(i,j,:)+10)*discount^(maxdist-distance(i,j));
+        if i ~= prevx(1) | j ~= prevx(2)
+            viscfg.Q(i,j,:)=mask(i,j,:).*(viscfg.Q(i,j,:)+maxQ)*discount^(maxdist-1-distance(i,j));
         end
         [maxval, maxind] = max(viscfg.Q(i,j,:));
         viscfg.h(i,j)=maxind;
