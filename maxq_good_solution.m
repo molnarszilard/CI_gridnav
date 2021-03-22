@@ -65,7 +65,7 @@ if k==3
 end
 if k==4
     if j<mapsize(2)
-        position=[i;+1j];
+        position=[i;j+1];
         not_valid=0;
         for o = 1:nrOfObstacles(2)
             if(position(1) == model.x_obst(1,o) && position(2) == model.x_obst(2,o))

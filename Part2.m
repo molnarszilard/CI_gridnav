@@ -69,14 +69,14 @@ viscfg = struct;
 viscfg.model = model;
 viscfg.x = xplus;
 epsQiter=100; 
-epshiter=3; 
-epsQeval=1; 
+epshiter=0; 
+epsQeval=0.1; 
 discount = 0.6;
 iter=0;
 tic
 [Q_optim, h_optim1] = iteratiaQ(discount,epsQiter, model, start_loc);
 toc
-h_optim2 = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc)
+h_optim2 = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc);
 xplus = start_loc;
 
 while iter<epsQiter && ~terminal
@@ -92,4 +92,3 @@ viscfg.x = [];
 viscfg.h = h_optim2;
 viscfg.gview =  gridnav_visualize(viscfg);
 pause
-
