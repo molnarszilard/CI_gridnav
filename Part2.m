@@ -1,13 +1,8 @@
-% create a model of the grid nav problem, see also help gridnav_problem
-% the size along the X and Y coords respectively
 cfg.size = [5 5];
-% we could also configure the rewards: per regular step, field rew_step
-% for collision with obstacle or wall: rew_obst; and for reaching the goal: rew_goal
 max_x=cfg.size(1);
 max_y=cfg.size(2);
-
 cfg.x_goal = randi([1 5],1,2)';
-cfg.x_obst = [;];  % ?obst..?
+cfg.x_obst = [;];  
 nr_of_obstacles=5;
 n=0;
 while n<nr_of_obstacles
@@ -69,59 +64,32 @@ else
     'Please re-run the code, you are blocked!'  
 end
 model = gridnav_problem('model', cfg);
-% use the created to simulate a transition
-
-% start from X=3, Y=1 and go right (u=2)
-% xplus is the next state, rplus the reward resulting from the transition
-% terminal is a boolean flag indicating whether the resulting state is
-% terminal or not
-%%
-
-
-[xplus, rplus, terminal] = gridnav_mdp(model, start_loc, ustart);   
-% xplus
-% rplus
-%%
+[xplus, rplus, terminal] = gridnav_mdp(model, start_loc, ustart);  
 viscfg = struct;
 viscfg.model = model;
 viscfg.x = xplus;
-viscfg.gview = gridnav_visualize(viscfg);
-epsqiter=100; %
-epshiter=3; %
-epsheval=1; %
-h=zeros(1,epsqiter); %
-h(1)=ustart;
+epsQiter=100; 
+epshiter=3; 
+epsQeval=1; 
+discount = 0.6;
 iter=0;
-discount=0.95;
-viscfg.Q = zeros(5, 5, 4); 
-viscfg.Q(start_loc(1),start_loc(2),ustart)=rplus;
-while iter<epsqiter & ~terminal
-    movement=randi([1 4],1,1); 
+tic
+[Q_optim, h_optim1] = iteratiaQ(discount,epsQiter, model, start_loc);
+toc
+h_optim2 = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc)
+xplus = start_loc;
+
+while iter<epsQiter && ~terminal
+    movement=h_optim2(xplus(1),xplus(2));
     [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement);     
     viscfg.x = xplus;
     viscfg.gview = gridnav_visualize(viscfg);
-    iter=iter+1;    
-%     model = gridnav_problem('reset', cfg,'rand');
+    iter=iter+1;
 end
-pause;
-viscfg.x = [];  % before, remove the robot state since we don't want to show it anymore
-maxdist=max(max(distance));
-maxQ=max(max(max(viscfg.Q)));
-% viscfg.Q
-% if we wanted to NOT reuse the view, but create a new figure, we could do:
-viscfg.gview = [];
-viscfg.gview = gridnav_visualize(viscfg);
 pause
-
-
-%% Partea 2
-
-Qoptim = iteratiaQ(discount,epsqiter, epshiter, epsheval, model, start_loc)
-
-
-
-
-
-
-
+viscfg.Q = Q_optim ;
+viscfg.x = [];
+viscfg.h = h_optim2;
+viscfg.gview =  gridnav_visualize(viscfg);
+pause
 

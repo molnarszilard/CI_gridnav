@@ -1,0 +1,31 @@
+function Q=Q_Teta(q,h,i,j,u,size)
+if u==1
+    if i>1
+        Q=max(q(i-1,j,h()));
+    else
+        Q=max(q(i,j,:));
+    end
+end
+if u==2
+    if i<size(1)
+        Q=max(q(i+1,j,:));
+    else
+        Q=max(q(i,j,:));
+    end
+end
+if u==3
+    if j>1
+        Q=max(q(i,j-1,:));
+    else
+        Q=max(q(i,j,:));
+    end
+end
+if u==4
+    if j<size(2)
+        Q=max(q(i-1,j+1,:));
+    else
+        Q=max(q(i,j,:));
+    end
+end
+end
+
