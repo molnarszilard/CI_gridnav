@@ -1,4 +1,5 @@
-function Q=Q_Teta(q,h,i,j,u,mapsize,model)
+function Q=Q_Teta(q,h,i,j,u,model)
+mapsize=model.size;
 nrOfObstacles =size(model.x_obst);
 if u==1
     if i>1

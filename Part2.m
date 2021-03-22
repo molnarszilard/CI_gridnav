@@ -74,9 +74,9 @@ epsQeval=0.1;
 discount = 0.6;
 iter=0;
 tic
-[Q_optim1, h_optim1] = iteratiaQ(discount,epsQiter, model, start_loc);
+[Q_optim1, h_optim1] = iteratiaQ(discount,epsQiter,epsQeval, model);
 toc
-[Q_optim2, h_optim2] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc);
+[Q_optim2, h_optim2] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model);
 xplus = start_loc;
 
 Q=Q_optim1;

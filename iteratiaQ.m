@@ -1,17 +1,13 @@
-function [Q_optim, h] = iteratiaQ(discount,epsQiter, model, start_loc)
-
+function [Q_optim, h] = iteratiaQ(discount,epsQiter,epsQeval, model)
 i = 0;
-Q_init = zeros(5,5,4);
-movement=randi([1 4],1,1);
-[xplus, rplus, terminal] = gridnav_mdp(model, start_loc, movement);
+Q_init = zeros(model.size(1),model.size(2),4);
 Q = Q_init;
 norm = 100;
-while i<epsQiter 
+while i<epsQiter && epsQeval<=norm
     Qprev = Q;
-    for column=1:5
-        for row=1:5
+    for column=1:model.size(1)
+        for row=1:model.size(2)
             position = [column;row];
-            %if isempty(ismember(model.x_obst,position)) && isempty(ismember(model.x_goal,position))
             nrOfObstacles = size(model.x_obst);
             not_valid=0;
             for o = 1:nrOfObstacles(2)
@@ -28,15 +24,13 @@ while i<epsQiter
                    if terminal
                        Q(column,row,u) = rplus;
                    else
-                       Q(column,row,u) = rplus + discount*maxq_good_solution(Qprev,column,row,u,[5,5],model);
+                       Q(column,row,u) = rplus + discount*maxq_good_solution(Qprev,column,row,u,model);
                    end                   
                end
-%             else
-%                 Q(column,row,:) = ones(1,4)*(-100);
             end                     
         end
     end
-    %norm = abs(Q - Qprev);    
+    norm = sum(sum(sum(abs(Qprev-Q))));  
     i = i+1;
 end
 Q_optim = Q;

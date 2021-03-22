@@ -1,4 +1,5 @@
-function maxQ=maxq_good_solution(Q,i,j,k,mapsize,model)
+function maxQ=maxq_good_solution(Q,i,j,k,model)
+mapsize=model.size;
 nrOfObstacles =size(model.x_obst);
 if k==1
     if i>1
