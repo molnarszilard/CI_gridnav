@@ -79,16 +79,20 @@ toc
 [Q_optim2, h_optim2] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc);
 xplus = start_loc;
 
+Q=Q_optim1;
+H=h_optim1;
 while iter<epsQiter && ~terminal
-    movement=h_optim2(xplus(1),xplus(2));
+    movement=H(xplus(1),xplus(2));
     [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement);     
     viscfg.x = xplus;
     viscfg.gview = gridnav_visualize(viscfg);
     iter=iter+1;
 end
 pause
-viscfg.Q = Q_optim1 ;
+viscfg.Q = Q ;
 viscfg.x = [];
-viscfg.h = h_optim1;
+viscfg.h = H;
 viscfg.gview =  gridnav_visualize(viscfg);
 pause
+figure
+mesh(max(Q,[],3))
