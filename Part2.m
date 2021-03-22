@@ -74,9 +74,9 @@ epsQeval=0.1;
 discount = 0.6;
 iter=0;
 tic
-[Q_optim, h_optim1] = iteratiaQ(discount,epsQiter, model, start_loc);
+[Q_optim1, h_optim1] = iteratiaQ(discount,epsQiter, model, start_loc);
 toc
-h_optim2 = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc);
+[Q_optim2, h_optim2] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc);
 xplus = start_loc;
 
 while iter<epsQiter && ~terminal
@@ -87,8 +87,8 @@ while iter<epsQiter && ~terminal
     iter=iter+1;
 end
 pause
-viscfg.Q = Q_optim ;
+viscfg.Q = Q_optim1 ;
 viscfg.x = [];
-viscfg.h = h_optim2;
+viscfg.h = h_optim1;
 viscfg.gview =  gridnav_visualize(viscfg);
 pause

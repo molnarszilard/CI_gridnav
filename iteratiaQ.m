@@ -31,8 +31,8 @@ while i<epsQiter
                        Q(column,row,u) = rplus + discount*maxq_good_solution(Qprev,column,row,u,[5,5],model);
                    end                   
                end
-            else
-                Q(column,row,:) = ones(1,4)*(-100);
+%             else
+%                 Q(column,row,:) = ones(1,4)*(-100);
             end                     
         end
     end

@@ -1,4 +1,4 @@
-function [h_optim] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc)
+function [Q,h_optim] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model, start_loc)
 i = 0;
 Q_init = zeros(5,5,4);
 h_init = ones(5,5);
@@ -38,8 +38,8 @@ while normH>epshiter
                             Q(column,row,u) = rplus + discount*Q_Teta(Qprev,hprev,column,row,u,[5;5],model);
                         end
                     end
-                else
-                    Q(column,row,:) = ones(1,4)*(-100);
+%                 else
+%                     Q(column,row,:) = ones(1,4)*(-100);
                 end
             end
         end
@@ -49,7 +49,7 @@ while normH>epshiter
     end
     toc
     [m,h]=max(Q,[],3);
-    normH = sum(sum(abs(hprev-h)))
+    normH = sum(sum(abs(hprev-h)));
     i=i+1;
 end
 h_optim = h;
