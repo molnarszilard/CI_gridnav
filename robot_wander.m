@@ -1,8 +1,6 @@
-% create a model of the grid nav problem, see also help gridnav_problem
-% the size along the X and Y coords respectively
+
 cfg.size = [5 5];
-% we could also configure the rewards: per regular step, field rew_step
-% for collision with obstacle or wall: rew_obst; and for reaching the goal: rew_goal
+
 max_x=cfg.size(1);
 max_y=cfg.size(2);
 
@@ -38,7 +36,6 @@ while isempty(start_loc)
       end    
       if exist==0
          start_loc=new_start;
-         n=n+1; %folosleges
       end
     end
 end
@@ -78,25 +75,22 @@ viscfg.model = model;
 viscfg.x = xplus;
 viscfg.gview = gridnav_visualize(viscfg);
 epsqiter=100; %
-epshiter=3; %
-epsheval=1; %
-h=zeros(1,epsqiter); %
-h(1)=ustart;
-iter=0;
-discount=0.95;
-viscfg.Q = zeros(5, 5, 4); 
-viscfg.Q(start_loc(1),start_loc(2),ustart)=rplus;
-while iter<epsqiter && ~terminal
-    movement=randi([1 4],1,1); 
-    [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement);     
-    viscfg.x = xplus;
+runs=0;
+max_runs=3;
+while runs<max_runs
+    iter=0;
+    while iter<epsqiter && ~terminal
+        movement=randi([1 4],1,1); 
+        [xplus, rplus, terminal] = gridnav_mdp(model, xplus, movement);     
+        viscfg.x = xplus;
+        viscfg.gview = gridnav_visualize(viscfg);
+        iter=iter+1;    
+    end
+    iter
+    pause;
+    start_loc = gridnav_problem('reset', model,'rand')
+    viscfg.x = start_loc;
     viscfg.gview = gridnav_visualize(viscfg);
-    iter=iter+1;    
+    terminal=0;
+    runs=runs+1;
 end
-
-
-
-
-
-
-
