@@ -125,13 +125,3 @@ while ~terminal
     viscfg.x = xplus;
     viscfg.gview = gridnav_visualize(viscfg);
 end
-
-
-
-
-
-
-
-
-
-
