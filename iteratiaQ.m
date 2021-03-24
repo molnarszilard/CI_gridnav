@@ -1,4 +1,4 @@
-function [Q_optim, h] = iteratiaQ(discount,epsQiter,epsQeval, model)
+function [Q_optim, h,iteratii] = iteratiaQ(discount,epsQiter,epsQeval, model)
 i = 0;
 Q_init = zeros(model.size(1),model.size(2),4);
 Q = Q_init;
@@ -35,5 +35,6 @@ while i<epsQiter && epsQeval<=norm
 end
 Q_optim = Q;
 [maxValue,h]=max(Q_optim,[],3);
+iteratii = i;
 end
 
