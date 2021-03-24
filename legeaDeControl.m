@@ -1,17 +1,16 @@
-function [Q,h_optim] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model)
+function [Q,h_optim, iteratiiMajore, iteratiiMinore] = legeaDeControl(discount, epshiter, epsQeval, epsQiter, model)
 i = 0;
 Q_init = zeros(model.size(1),model.size(2),4);
 h_init = ones(model.size(1),model.size(2));
 Q = Q_init;
 h = h_init;
+iteratiiMinore = 0;
 normH = 100;
 while normH>epshiter
     hprev = h;
-    tic
     j=0;
     normQ=100;
     while j<epsQiter && normQ>=epsQeval
-        tic
         Qprev = Q;
         for column=1:model.size(1)
             for row=1:model.size(2)
@@ -40,13 +39,12 @@ while normH>epshiter
         end
         j = j+1;
         normQ = sum(sum(sum(abs(Qprev-Q))));
-        toc
     end
     toc
     [m,h]=max(Q,[],3);
     normH = sum(sum(abs(hprev-h)));
+    iteratiiMinore = cat(1,iteratiiMinore, j);
 end
 h_optim = h;
+iteratiiMajore = length(iteratiiMinore);
 end
-
-
