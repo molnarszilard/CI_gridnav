@@ -24,14 +24,13 @@ cfg.x_obst = [1 1,5,4,3;2,5,3,4,1];  % an example case
 %    
 % end
 model = gridnav_problem('model', cfg);
-% S = struct('model', model,'K',1000,'T',100,'gamma', 0.95, 'alpha', 0.1, 'epsilon', 0.3, 'u', [1,2,3,4]);
 %% Params
 config=struct();
 config.model=model;
 config.T=100;
 config.K=1000;
 config.alpha=0.1;
-config.gamma=0.9;
+config.gamma=0.98;
 config.epsilon=0.3;
 config.epsilondecay=1;
 config.visualize=1;
@@ -41,6 +40,6 @@ config.visualize=1;
 
 %% Part 2 
 config.epsilon=1;
-config.epsilondecay=0.9;
+config.epsilondecay=0.90;
 config.visualize=0;
 gridnav_nearoptsol(config);
