@@ -28,8 +28,8 @@ model = gridnav_problem('model', cfg);
 %% Params
 config=struct();
 config.model=model;
-config.T=10;
-config.K=100;
+config.T=100;
+config.K=1000;
 config.alpha=0.1;
 config.gamma=0.9;
 config.epsilon=0.3;
@@ -37,9 +37,10 @@ config.epsilondecay=1;
 config.visualize=1;
 
 %% Part 1
-[Qseq, Rseq]  = qlearning(config);
+% [Qseq, Rseq]  = qlearning(config);
 
 %% Part 2 
+config.epsilon=1;
 config.epsilondecay=0.9;
 config.visualize=0;
-% gridnav_nearoptsol(config);
+gridnav_nearoptsol(config);
