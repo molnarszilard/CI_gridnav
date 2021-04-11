@@ -13,12 +13,9 @@ function [Qseq, Rseq] = qlearning(config)
         viscfg.x = start_loc;
         viscfg.gview = gridnav_visualize(viscfg);
     end
-    epsmove=0;
-    nonepsmove=0;
     for i=1:config.T
         Qprev=Q;
         iter=0;
-        xplus=start_loc;
         terminal=0;
         eps=config.epsilon;
         pos=start_loc;
@@ -29,10 +26,8 @@ function [Qseq, Rseq] = qlearning(config)
              
             if probability >= eps
                  [qmax,movement] = max(Qprev(pos(1),pos(2),:)); 
-                 nonepsmove=nonepsmove+1;
             else  
                  movement=randi([1 4],1,1);
-                 epsmove=epsmove+1;
             end
              
             [xplus, rplus, terminal] = gridnav_mdp(model, pos, movement);
@@ -55,8 +50,6 @@ function [Qseq, Rseq] = qlearning(config)
         Q
         Rseq(i)
         iter
-    %     pause;
-    %     start_loc = gridnav_problem('reset', model,'rand')
 %           pause;
     end
 
@@ -65,6 +58,4 @@ function [Qseq, Rseq] = qlearning(config)
         viscfg.Q = Q ;
         viscfg.gview = gridnav_visualize(viscfg);
     end 
-%     nonepsmove
-%     epsmove
 end
