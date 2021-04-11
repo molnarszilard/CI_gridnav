@@ -62,7 +62,7 @@ function gridnav_nearoptsol(config)
             probability = rand(1);
              
             if probability >= eps
-                 [qmax,movement] = max(Qstar(pos(1),pos(2),:)); 
+                 [qmax,movement] = max(Q(pos(1),pos(2),:)); 
             else  
                  movement=randi([1 4],1,1);
             end
@@ -71,7 +71,7 @@ function gridnav_nearoptsol(config)
             if terminal 
                 Q(pos(1), pos(2),movement)=rplus;
             else
-                Q(pos(1), pos(2),movement) = Qstar(pos(1), pos(2),movement) + config.alpha*(rplus + config.gamma*max(Qstar(xplus(1),xplus(2),:))-Qstar(pos(1), pos(2),movement));
+                Q(pos(1), pos(2),movement) = Q(pos(1), pos(2),movement) + config.alpha*(rplus + config.gamma*max(Q(xplus(1),xplus(2),:))-Q(pos(1), pos(2),movement));
             end
             if config.visualize
                 viscfg.x = xplus;
@@ -105,7 +105,7 @@ function gridnav_nearoptsol(config)
 %     nonepsmove
 %     epsmove
     figure
-    plot(Qdelta);
+    plot(Qdelta); title('Qdelta'); xlabel('iterations'); ylabel('difference');
     figure
-    plot(Rseq);
+    plot(Rseq); title('R'); xlabel('iterations'); ylabel('reward');
 end
