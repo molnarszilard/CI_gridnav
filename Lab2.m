@@ -55,11 +55,11 @@ if part==2
     config.visualize=0;
     config.epsilon = 1;
     i = 1;
-    l = length(0.9:0.025:0.99);
+    l = length(0.9:0.01:0.99);
     L = l(1,1);
     QDeltas = zeros(L,config.T);
     R = zeros(L,config.T);
-    epsilondecay=0.9:0.025:0.99;
+    epsilondecay=0.9:0.01:0.99;
 
     qicfg.gamma = config.gamma;
     qicfg.eps = 1;
