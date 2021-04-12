@@ -38,7 +38,7 @@ function gridnav_nearoptsol(config)
             
             probability = rand(1); 
             if probability >= eps
-                 [qmax,movement] = max(Qprev(pos(1),pos(2),:)); 
+                 [qmax,movement] = max(Qprev(pos(1),pos(2),:));
             else  
                  movement=randi([1 4],1,1);
             end
@@ -62,7 +62,7 @@ function gridnav_nearoptsol(config)
         if i==1
             Qdelta(i)=0;
         else
-            Qdelta(i)=norm(Qstar(:)-Q(:));
+            Qdelta(i)=norm(Q(:)-Qstar(:));
         end
     end
 
