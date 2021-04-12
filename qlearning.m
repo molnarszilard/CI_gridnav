@@ -4,7 +4,8 @@ function [Qseq, Rseq] = qlearning(config)
     Qseq = zeros(config.T,5,5,4);
     model=config.model;
     viscfg = struct;
-    start_loc=gridnav_problem('reset', model,'rand');
+%     start_loc=gridnav_problem('reset', model,'rand');
+    start_loc=[1;1];
     Q = zeros(5,5,4);
     
     if config.visualize         
@@ -36,11 +37,11 @@ function [Qseq, Rseq] = qlearning(config)
             else
                 Q(pos(1), pos(2),movement) = Qprev(pos(1), pos(2),movement) + config.alpha*(rplus + config.gamma*max(Qprev(xplus(1),xplus(2),:))-Qprev(pos(1), pos(2),movement));
             end
-            if config.visualize
-                viscfg.x = xplus;
-                viscfg.Q = Q ;
-                viscfg.gview = gridnav_visualize(viscfg);
-            end
+%             if config.visualize
+%                 viscfg.x = xplus;
+%                 viscfg.Q = Q ;
+%                 viscfg.gview = gridnav_visualize(viscfg);
+%             end
             Rseq(i)=Rseq(i)+rplus;
             eps=eps*config.epsilondecay;
             pos=xplus;
