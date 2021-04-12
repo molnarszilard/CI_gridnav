@@ -3,7 +3,7 @@ cfg.size = [5 5]; % generate a 5-by-5 map
 % max_x=cfg.size(1);
 % max_y=cfg.size(2);
 % cfg.x_goal = randi([1 5],1,2)'; %give a random goal
-cfg.x_goal = [2;5]; % an example case
+cfg.x_goal = [5;4]; % an example case
 cfg.x_obst = [1 1,5,4,3;2,5,3,4,1];  % an example case
 % nr_of_obstacles=5;
 % n=0;
@@ -40,6 +40,6 @@ config.visualize=1;
 
 %% Part 2 
 config.epsilon=1;
-config.epsilondecay=0.90;
+config.epsilondecay=0.99;
 config.visualize=0;
 gridnav_nearoptsol(config);
